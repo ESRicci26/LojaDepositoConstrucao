@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos/base :: cabecalho(${titulo})}"></head>
+<body>
+<header th:replace="~{fragmentos/base :: barra('clientes')}"></header>
+
+<main class="container">
+    <div class="cabecalho-pagina">
+        <h1 th:text="${titulo}">Novo cliente</h1>
+    </div>
+
+    <section class="cartao">
+        <form th:action="@{${acao}}" th:object="${formulario}" method="post" data-listas-dinamicas novalidate>
+            <div th:replace="~{fragmentos/base :: erros}"></div>
+
+            <div class="grade-formulario">
+                <div class="campo" th:classappend="${#fields.hasErrors('nome')} ? 'campo-invalido'">
+                    <label for="nome">Nome</label>
+                    <input type="text" id="nome" th:field="*{nome}" maxlength="155" required>
+                </div>
+
+                <div class="campo" th:classappend="${#fields.hasErrors('tipo')} ? 'campo-invalido'">
+                    <label for="tipo">Tipo</label>
+                    <select id="tipo" th:field="*{tipo}" required>
+                        <option value="">Selecione...</option>
+                        <option th:each="opcao : ${tiposCliente}" th:value="${opcao}"
+                                th:text="${opcao.descricao}">Novo</option>
+                    </select>
+                </div>
+
+                <div class="campo" th:classappend="${#fields.hasErrors('rg')} ? 'campo-invalido'">
+                    <label for="rg">RG</label>
+                    <input type="text" id="rg" th:field="*{rg}" inputmode="numeric" required>
+                    <div class="dica">Somente números.</div>
+                </div>
+
+                <div class="campo" th:classappend="${#fields.hasErrors('cpf')} ? 'campo-invalido'">
+                    <label for="cpf">CPF</label>
+                    <input type="text" id="cpf" th:field="*{cpf}" inputmode="numeric" maxlength="11" required>
+                    <div class="dica">11 dígitos, sem pontos ou traço.</div>
+                </div>
+            </div>
+
+            <fieldset class="grupo">
+                <legend>Telefones</legend>
+                <p class="sem-itens">Nenhum telefone adicionado.</p>
+                <div class="lista-dinamica" id="lista-telefones">
+                    <div class="linha-dinamica linha-telefone" th:each="telefone, estado : *{telefones}">
+                        <div class="campo">
+                            <label>Telefone</label>
+                            <input type="text" maxlength="20" th:name="|telefones[${estado.index}]|"
+                                   th:value="${telefone}" data-nome="telefones[{i}]">
+                        </div>
+                        <button type="button" class="btn btn-perigo btn-pequeno" data-acao="remover-linha">Remover</button>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-secundario" data-acao="adicionar-linha"
+                        data-lista="lista-telefones" data-modelo="modelo-telefone">Adicionar telefone</button>
+            </fieldset>
+
+            <fieldset class="grupo">
+                <legend>Endereços</legend>
+                <p class="sem-itens">Nenhum endereço adicionado.</p>
+                <div class="lista-dinamica" id="lista-enderecos">
+                    <div class="linha-dinamica linha-endereco" th:each="endereco, estado : *{enderecos}">
+                        <div class="campo">
+                            <label>Endereço</label>
+                            <input type="text" maxlength="150" th:name="|enderecos[${estado.index}].nomeEndereco|"
+                                   th:value="${endereco.nomeEndereco}" data-nome="enderecos[{i}].nomeEndereco">
+                        </div>
+                        <div class="campo">
+                            <label>Cidade</label>
+                            <input type="text" maxlength="100" th:name="|enderecos[${estado.index}].nomeCidade|"
+                                   th:value="${endereco.nomeCidade}" data-nome="enderecos[{i}].nomeCidade">
+                        </div>
+                        <div class="campo">
+                            <label>UF</label>
+                            <input type="text" maxlength="2" th:name="|enderecos[${estado.index}].siglaUf|"
+                                   th:value="${endereco.siglaUf}" data-nome="enderecos[{i}].siglaUf">
+                        </div>
+                        <button type="button" class="btn btn-perigo btn-pequeno" data-acao="remover-linha">Remover</button>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-secundario" data-acao="adicionar-linha"
+                        data-lista="lista-enderecos" data-modelo="modelo-endereco">Adicionar endereço</button>
+            </fieldset>
+
+            <div class="rodape-formulario">
+                <button type="submit" class="btn">Salvar</button>
+                <a class="btn btn-secundario" th:href="@{/clientes}">Cancelar</a>
+            </div>
+        </form>
+
+        <!-- Modelos usados pelo JavaScript para criar novas linhas -->
+        <template id="modelo-telefone">
+            <div class="linha-dinamica linha-telefone">
+                <div class="campo">
+                    <label>Telefone</label>
+                    <input type="text" maxlength="20" data-nome="telefones[{i}]">
+                </div>
+                <button type="button" class="btn btn-perigo btn-pequeno" data-acao="remover-linha">Remover</button>
+            </div>
+        </template>
+
+        <template id="modelo-endereco">
+            <div class="linha-dinamica linha-endereco">
+                <div class="campo">
+                    <label>Endereço</label>
+                    <input type="text" maxlength="150" data-nome="enderecos[{i}].nomeEndereco">
+                </div>
+                <div class="campo">
+                    <label>Cidade</label>
+                    <input type="text" maxlength="100" data-nome="enderecos[{i}].nomeCidade">
+                </div>
+                <div class="campo">
+                    <label>UF</label>
+                    <input type="text" maxlength="2" data-nome="enderecos[{i}].siglaUf">
+                </div>
+                <button type="button" class="btn btn-perigo btn-pequeno" data-acao="remover-linha">Remover</button>
+            </div>
+        </template>
+    </section>
+</main>
+
+<footer th:replace="~{fragmentos/base :: rodape}"></footer>
+<script th:replace="~{fragmentos/base :: scripts}"></script>
+</body>
+</html>

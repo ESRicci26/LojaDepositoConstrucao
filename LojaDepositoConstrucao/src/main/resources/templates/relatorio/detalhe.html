@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos/base :: cabecalho('Detalhes da Venda')}"></head>
+<body>
+<header th:replace="~{fragmentos/base :: barra('relatorios')}"></header>
+
+<main class="container">
+    <div class="cabecalho-pagina">
+        <h1>Detalhes da Venda #<span th:text="${detalhe.venda.id}">1</span></h1>
+        <div class="acoes">
+            <a class="btn btn-secundario" th:href="@{/relatorios}">Voltar</a>
+            <form th:action="@{/relatorios/{id}/deletar(id=${detalhe.venda.id})}" method="post"
+                  data-confirmar="Você tem certeza que deseja deletar a venda? Os produtos retornarão ao estoque.">
+                <button type="submit" class="btn btn-perigo">Deletar venda</button>
+            </form>
+        </div>
+    </div>
+
+    <div th:replace="~{fragmentos/base :: mensagens}"></div>
+
+    <section class="cartao">
+        <div class="grade-detalhes">
+            <div class="detalhe-item"><span>Cliente</span><strong th:text="${detalhe.cliente.nome}">Nome</strong></div>
+            <div class="detalhe-item"><span>RG</span><strong th:text="${detalhe.cliente.rg}">0</strong></div>
+            <div class="detalhe-item"><span>CPF</span><strong th:text="${detalhe.cliente.cpf}">0</strong></div>
+            <div class="detalhe-item">
+                <span>Pagamento</span>
+                <strong th:if="${detalhe.venda.paga}"
+                        th:text="${#temporals.format(detalhe.venda.dataPagamento, 'dd/MM/yyyy')}">01/01/2026</strong>
+                <strong th:unless="${detalhe.venda.paga}">Não Pago</strong>
+            </div>
+            <div class="detalhe-item">
+                <span>Endereço</span>
+                <strong th:text="${detalhe.endereco != null} ? ${detalhe.endereco.nomeEndereco} : 'Não informado'">Endereço</strong>
+            </div>
+            <div class="detalhe-item">
+                <span>Cidade / UF</span>
+                <strong th:text="${detalhe.endereco != null} ? ${detalhe.endereco.nomeCidade + ' / ' + detalhe.endereco.siglaUf} : '-'">Cidade</strong>
+            </div>
+        </div>
+
+        <h2>Produtos vendidos</h2>
+        <div class="tabela-wrapper">
+            <table class="tabela tabela-cartoes">
+                <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Nome</th>
+                    <th class="numero">Quantidade</th>
+                    <th class="numero">Preço unitário</th>
+                    <th class="numero">Preço total</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="item : ${detalhe.itens}">
+                    <td data-rotulo="Código" th:text="${item.codigoProduto}">1</td>
+                    <td data-rotulo="Nome" th:text="${item.nomeProduto}">Produto</td>
+                    <td data-rotulo="Quantidade" class="numero" th:text="${item.quantidade}">1</td>
+                    <td data-rotulo="Preço unitário" class="numero">
+                        <span th:replace="~{fragmentos/base :: moeda(${item.valorUnitario})}"></span>
+                    </td>
+                    <td data-rotulo="Preço total" class="numero">
+                        <span th:replace="~{fragmentos/base :: moeda(${item.valorTotal})}"></span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <p class="vazio" th:if="${detalhe.itens.isEmpty()}">Esta venda não possui produtos registrados.</p>
+
+        <div class="total-venda">
+            Valor total:
+            <span class="valor-destaque"><span th:replace="~{fragmentos/base :: moeda(${detalhe.venda.valorTotal})}"></span></span>
+        </div>
+
+        <form class="form-pagamento" th:unless="${detalhe.venda.paga}"
+              th:action="@{/relatorios/{id}/pagamento(id=${detalhe.venda.id})}" method="post">
+            <div class="campo">
+                <label for="dataPagamento">Data do pagamento</label>
+                <input type="date" id="dataPagamento" name="dataPagamento" required>
+            </div>
+            <button type="submit" class="btn">Registrar pagamento</button>
+        </form>
+    </section>
+</main>
+
+<footer th:replace="~{fragmentos/base :: rodape}"></footer>
+<script th:replace="~{fragmentos/base :: scripts}"></script>
+</body>
+</html>

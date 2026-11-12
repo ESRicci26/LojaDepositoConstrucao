@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos/base :: cabecalho('Registrar Venda')}"></head>
+<body>
+<header th:replace="~{fragmentos/base :: barra('vendas')}"></header>
+
+<main class="container">
+    <div class="cabecalho-pagina">
+        <div>
+            <h1>Registrar Venda</h1>
+            <p class="subtitulo">Registre uma nova venda!</p>
+        </div>
+        <a class="btn btn-secundario" th:href="@{/}">Voltar</a>
+    </div>
+
+    <section class="cartao">
+        <form id="formulario-venda" th:action="@{/vendas}" th:object="${formulario}" method="post"
+              data-listas-dinamicas novalidate>
+            <div th:replace="~{fragmentos/base :: erros}"></div>
+
+            <div class="grade-formulario">
+                <div class="campo" th:classappend="${#fields.hasErrors('idCliente')} ? 'campo-invalido'">
+                    <label for="idCliente">Cliente</label>
+                    <select id="idCliente" th:field="*{idCliente}" required>
+                        <option value="">Selecione...</option>
+                        <option th:each="item : ${clientes}"
+                                th:value="${item.cliente.id}"
+                                th:text="${item.cliente.nome}"
+                                th:attr="data-exige-pagamento=${item.cliente.exigePagamentoNaVenda()}">Cliente</option>
+                    </select>
+                </div>
+
+                <div class="campo" th:classappend="${#fields.hasErrors('dataPagamento')} ? 'campo-invalido'">
+                    <label for="dataPagamento">Data de pagamento</label>
+                    <input type="date" id="dataPagamento" th:field="*{dataPagamento}">
+                    <div class="dica" id="aviso-data" hidden>Clientes novos devem informar a data de pagamento.</div>
+                </div>
+            </div>
+
+            <fieldset class="grupo">
+                <legend>Produtos</legend>
+                <p class="sem-itens" hidden>Nenhum produto adicionado.</p>
+
+                <div class="lista-dinamica" id="lista-itens">
+                    <div class="linha-dinamica linha-item" th:each="item, estado : *{itens}">
+                        <div class="campo">
+                            <label>Produto</label>
+                            <select th:name="|itens[${estado.index}].idProduto|" data-nome="itens[{i}].idProduto">
+                                <option value="">Selecione...</option>
+                                <option th:each="produto : ${produtos}"
+                                        th:value="${produto.id}"
+                                        th:selected="${produto.id == item.idProduto}"
+                                        th:disabled="${produto.quantidadeEstoque == 0}"
+                                        th:attr="data-preco=${produto.valorUnitario}"
+                                        th:text="|${produto.nome} - R$ ${#numbers.formatDecimal(produto.valorUnitario, 1, 'POINT', 2, 'COMMA')} (estoque: ${produto.quantidadeEstoque})|">Produto</option>
+                            </select>
+                        </div>
+                        <div class="campo">
+                            <label>Quantidade</label>
+                            <input type="number" min="1" step="1" th:name="|itens[${estado.index}].quantidade|"
+                                   th:value="${item.quantidade}" data-nome="itens[{i}].quantidade">
+                        </div>
+                        <div class="campo">
+                            <label>Subtotal</label>
+                            <strong class="subtotal">R$ 0,00</strong>
+                        </div>
+                        <button type="button" class="btn btn-perigo btn-pequeno" data-acao="remover-linha">Remover</button>
+                    </div>
+                </div>
+
+                <button type="button" class="btn btn-secundario" data-acao="adicionar-linha"
+                        data-lista="lista-itens" data-modelo="modelo-item">Adicionar produto</button>
+
+                <div class="total-venda">Total: <span id="total-venda">R$ 0,00</span></div>
+            </fieldset>
+
+            <div class="rodape-formulario">
+                <button type="submit" class="btn">Registrar Venda</button>
+                <a class="btn btn-secundario" th:href="@{/}">Cancelar</a>
+            </div>
+        </form>
+
+        <!-- Modelo usado pelo JavaScript para criar novos itens -->
+        <template id="modelo-item">
+            <div class="linha-dinamica linha-item">
+                <div class="campo">
+                    <label>Produto</label>
+                    <select data-nome="itens[{i}].idProduto">
+                        <option value="">Selecione...</option>
+                        <option th:each="produto : ${produtos}"
+                                th:value="${produto.id}"
+                                th:disabled="${produto.quantidadeEstoque == 0}"
+                                th:attr="data-preco=${produto.valorUnitario}"
+                                th:text="|${produto.nome} - R$ ${#numbers.formatDecimal(produto.valorUnitario, 1, 'POINT', 2, 'COMMA')} (estoque: ${produto.quantidadeEstoque})|">Produto</option>
+                    </select>
+                </div>
+                <div class="campo">
+                    <label>Quantidade</label>
+                    <input type="number" min="1" step="1" data-nome="itens[{i}].quantidade">
+                </div>
+                <div class="campo">
+                    <label>Subtotal</label>
+                    <strong class="subtotal">R$ 0,00</strong>
+                </div>
+                <button type="button" class="btn btn-perigo btn-pequeno" data-acao="remover-linha">Remover</button>
+            </div>
+        </template>
+    </section>
+</main>
+
+<footer th:replace="~{fragmentos/base :: rodape}"></footer>
+<script th:replace="~{fragmentos/base :: scripts}"></script>
+</body>
+</html>

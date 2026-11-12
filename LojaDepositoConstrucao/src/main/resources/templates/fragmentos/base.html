@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="cabecalho(titulo)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${titulo} + ' | Loja Depósito Construção'">Loja Depósito Construção</title>
+    <link rel="icon" type="image/png" th:href="@{/favicon.png}">
+    <link rel="stylesheet" th:href="@{/css/estilo.css}">
+</head>
+<body>
+
+<!-- Barra de navegação principal; o parâmetro "ativo" destaca o item atual -->
+<header class="barra" th:fragment="barra(ativo)">
+    <div class="barra-conteudo">
+        <a class="marca" th:href="@{/}">
+            <img th:src="@{/img/icone.png}" alt="">
+            <span>Loja Depósito Construção</span>
+        </a>
+
+        <input type="checkbox" id="menu-alternar" class="menu-alternar" aria-label="Abrir menu">
+        <label for="menu-alternar" class="menu-botao" aria-hidden="true">&#9776;</label>
+
+        <nav class="menu-links">
+            <a th:href="@{/clientes}" th:classappend="${ativo == 'clientes'} ? 'ativo'">Clientes</a>
+            <a th:href="@{/produtos}" th:classappend="${ativo == 'produtos'} ? 'ativo'">Produtos</a>
+            <a th:href="@{/vendas/nova}" th:classappend="${ativo == 'vendas'} ? 'ativo'">Registrar Venda</a>
+            <a th:href="@{/relatorios}" th:classappend="${ativo == 'relatorios'} ? 'ativo'">Relatórios</a>
+            <form th:action="@{/sair}" method="post">
+                <button type="submit">Sair</button>
+            </form>
+        </nav>
+    </div>
+</header>
+
+<!-- Mensagens de sucesso e erro enviadas após redirecionamentos -->
+<div th:fragment="mensagens">
+    <div class="alerta alerta-sucesso" role="status" th:if="${mensagemSucesso}" th:text="${mensagemSucesso}"></div>
+    <div class="alerta alerta-erro" role="alert" th:if="${mensagemErro}" th:text="${mensagemErro}"></div>
+</div>
+
+<!-- Resumo dos erros de validação do formulário (usar dentro de th:object) -->
+<div th:fragment="erros" class="alerta alerta-erro" role="alert" th:if="${#fields.hasErrors('*')}">
+    <ul>
+        <li th:each="erro : ${#fields.detailedErrors()}" th:text="${erro.message}"></li>
+    </ul>
+</div>
+
+<!-- Valor monetário no formato brasileiro -->
+<span th:fragment="moeda(valor)"
+      th:text="|R$ ${#numbers.formatDecimal(valor, 1, 'POINT', 2, 'COMMA')}|">R$ 0,00</span>
+
+<footer class="rodape" th:fragment="rodape">
+    LojaDepositoConstrucao &copy; <span th:text="${#temporals.year(#temporals.createNow())}">2026</span>
+</footer>
+
+<script th:fragment="scripts" th:src="@{/js/app.js}" defer></script>
+
+</body>
+</html>

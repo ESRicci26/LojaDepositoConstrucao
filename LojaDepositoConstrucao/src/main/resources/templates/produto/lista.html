@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos/base :: cabecalho('Produtos')}"></head>
+<body>
+<header th:replace="~{fragmentos/base :: barra('produtos')}"></header>
+
+<main class="container">
+    <div class="cabecalho-pagina">
+        <div>
+            <h1>Gerenciamento de Produtos</h1>
+            <p class="subtitulo">Verifique e gerencie os produtos!</p>
+        </div>
+        <div class="acoes">
+            <a class="btn" th:href="@{/produtos/novo}">Adicionar produto</a>
+            <a class="btn btn-secundario" th:href="@{/}">Voltar</a>
+        </div>
+    </div>
+
+    <div th:replace="~{fragmentos/base :: mensagens}"></div>
+
+    <section class="cartao">
+        <div class="tabela-wrapper">
+            <table class="tabela tabela-cartoes">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                    <th class="numero">Quantidade</th>
+                    <th class="numero">Valor</th>
+                    <th>Ações</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="produto : ${produtos}">
+                    <td data-rotulo="ID" th:text="${produto.id}">1</td>
+                    <td data-rotulo="Nome" th:text="${produto.nome}">Produto</td>
+                    <td data-rotulo="Quantidade" class="numero" th:text="${produto.quantidadeEstoque}">0</td>
+                    <td data-rotulo="Valor" class="numero">
+                        <span th:replace="~{fragmentos/base :: moeda(${produto.valorUnitario})}"></span>
+                    </td>
+                    <td data-rotulo="Ações">
+                        <div class="acoes">
+                            <a class="btn btn-secundario btn-pequeno"
+                               th:href="@{/produtos/{id}/editar(id=${produto.id})}">Atualizar</a>
+                            <form th:action="@{/produtos/{id}/deletar(id=${produto.id})}" method="post"
+                                  data-confirmar="Tem certeza que deseja deletar o produto?">
+                                <button type="submit" class="btn btn-perigo btn-pequeno">Deletar</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <p class="vazio" th:if="${produtos.isEmpty()}">Nenhum produto cadastrado.</p>
+    </section>
+</main>
+
+<footer th:replace="~{fragmentos/base :: rodape}"></footer>
+<script th:replace="~{fragmentos/base :: scripts}"></script>
+</body>
+</html>

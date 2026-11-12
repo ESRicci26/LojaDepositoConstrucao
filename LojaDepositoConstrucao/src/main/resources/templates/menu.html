@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos/base :: cabecalho('Menu Principal')}"></head>
+<body>
+<header th:replace="~{fragmentos/base :: barra('menu')}"></header>
+
+<main class="container">
+    <div class="cabecalho-pagina">
+        <div>
+            <h1>Menu Principal</h1>
+            <p class="subtitulo">Bem-vindo ao Sistema de Gerenciamento!</p>
+        </div>
+    </div>
+
+    <div th:replace="~{fragmentos/base :: mensagens}"></div>
+
+    <section class="grade-menu">
+        <a class="item-menu" th:href="@{/clientes}">
+            <h2>Gerenciar Clientes</h2>
+            <p>Cadastre, atualize e remova clientes, telefones e endereços.</p>
+        </a>
+        <a class="item-menu" th:href="@{/produtos}">
+            <h2>Gerenciar Produtos</h2>
+            <p>Controle o estoque e os valores dos produtos.</p>
+        </a>
+        <a class="item-menu" th:href="@{/vendas/nova}">
+            <h2>Registrar Venda</h2>
+            <p>Registre uma nova venda com baixa automática no estoque.</p>
+        </a>
+        <a class="item-menu" th:href="@{/relatorios}">
+            <h2>Gerenciar Relatórios</h2>
+            <p>Consulte, acompanhe pagamentos e exclua vendas.</p>
+        </a>
+    </section>
+</main>
+
+<footer th:replace="~{fragmentos/base :: rodape}"></footer>
+<script th:replace="~{fragmentos/base :: scripts}"></script>
+</body>
+</html>

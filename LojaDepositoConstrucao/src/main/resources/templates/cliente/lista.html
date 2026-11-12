@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos/base :: cabecalho('Clientes')}"></head>
+<body>
+<header th:replace="~{fragmentos/base :: barra('clientes')}"></header>
+
+<main class="container">
+    <div class="cabecalho-pagina">
+        <div>
+            <h1>Gerenciamento de Clientes</h1>
+            <p class="subtitulo">Verifique e gerencie os clientes!</p>
+        </div>
+        <div class="acoes">
+            <a class="btn" th:href="@{/clientes/novo}">Adicionar cliente</a>
+            <a class="btn btn-secundario" th:href="@{/}">Voltar</a>
+        </div>
+    </div>
+
+    <div th:replace="~{fragmentos/base :: mensagens}"></div>
+
+    <section class="cartao">
+        <div class="tabela-wrapper">
+            <table class="tabela tabela-cartoes">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                    <th>RG</th>
+                    <th>CPF</th>
+                    <th>Tipo</th>
+                    <th>Telefones</th>
+                    <th>Endereços</th>
+                    <th>Ações</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="item : ${clientes}">
+                    <td data-rotulo="ID" th:text="${item.cliente.id}">1</td>
+                    <td data-rotulo="Nome" th:text="${item.cliente.nome}">Nome</td>
+                    <td data-rotulo="RG" th:text="${item.cliente.rg}">123</td>
+                    <td data-rotulo="CPF" th:text="${item.cliente.cpf}">000</td>
+                    <td data-rotulo="Tipo">
+                        <span class="selo"
+                              th:classappend="${item.cliente.tipo.name() == 'NOVO'} ? 'selo-novo' : 'selo-antigo'"
+                              th:text="${item.cliente.tipo.descricao}">Novo</span>
+                    </td>
+                    <td data-rotulo="Telefones">
+                        <ul class="lista-simples" th:if="${!item.telefones.isEmpty()}">
+                            <li th:each="telefone : ${item.telefones}" th:text="${telefone.numero}"></li>
+                        </ul>
+                        <span th:if="${item.telefones.isEmpty()}">-</span>
+                    </td>
+                    <td data-rotulo="Endereços">
+                        <ul class="lista-simples" th:if="${!item.enderecos.isEmpty()}">
+                            <li th:each="endereco : ${item.enderecos}" th:text="${endereco.resumo()}"></li>
+                        </ul>
+                        <span th:if="${item.enderecos.isEmpty()}">-</span>
+                    </td>
+                    <td data-rotulo="Ações">
+                        <div class="acoes">
+                            <a class="btn btn-secundario btn-pequeno"
+                               th:href="@{/clientes/{id}/editar(id=${item.cliente.id})}">Atualizar</a>
+                            <form th:action="@{/clientes/{id}/deletar(id=${item.cliente.id})}" method="post"
+                                  data-confirmar="Tem certeza que deseja deletar o cliente?">
+                                <button type="submit" class="btn btn-perigo btn-pequeno">Deletar</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <p class="vazio" th:if="${clientes.isEmpty()}">Nenhum cliente cadastrado.</p>
+    </section>
+</main>
+
+<footer th:replace="~{fragmentos/base :: rodape}"></footer>
+<script th:replace="~{fragmentos/base :: scripts}"></script>
+</body>
+</html>

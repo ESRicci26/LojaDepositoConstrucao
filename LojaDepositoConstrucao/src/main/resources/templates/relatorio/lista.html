@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos/base :: cabecalho('Relatórios de Vendas')}"></head>
+<body>
+<header th:replace="~{fragmentos/base :: barra('relatorios')}"></header>
+
+<main class="container">
+    <div class="cabecalho-pagina">
+        <div>
+            <h1>Relatórios de Vendas</h1>
+            <p class="subtitulo">Verifique e gerencie as vendas!</p>
+        </div>
+        <div class="acoes">
+            <a class="btn" th:href="@{/vendas/nova}">Registrar venda</a>
+            <a class="btn btn-secundario" th:href="@{/}">Voltar</a>
+        </div>
+    </div>
+
+    <div th:replace="~{fragmentos/base :: mensagens}"></div>
+
+    <section class="cartao">
+        <div class="tabela-wrapper">
+            <table class="tabela tabela-cartoes">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Cliente</th>
+                    <th>Pagamento</th>
+                    <th class="numero">Valor total</th>
+                    <th>Ações</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="venda : ${vendas}">
+                    <td data-rotulo="ID" th:text="${venda.id}">1</td>
+                    <td data-rotulo="Cliente" th:text="${venda.nomeCliente}">Cliente</td>
+                    <td data-rotulo="Pagamento">
+                        <span class="selo selo-pago" th:if="${venda.paga}"
+                              th:text="${#temporals.format(venda.dataPagamento, 'dd/MM/yyyy')}">01/01/2026</span>
+                        <span class="selo selo-pendente" th:unless="${venda.paga}">Não Pago</span>
+                    </td>
+                    <td data-rotulo="Valor total" class="numero">
+                        <span th:replace="~{fragmentos/base :: moeda(${venda.valorTotal})}"></span>
+                    </td>
+                    <td data-rotulo="Ações">
+                        <div class="acoes">
+                            <a class="btn btn-secundario btn-pequeno"
+                               th:href="@{/relatorios/{id}(id=${venda.id})}">Visualizar</a>
+                            <form th:action="@{/relatorios/{id}/deletar(id=${venda.id})}" method="post"
+                                  data-confirmar="Você tem certeza que deseja deletar a venda?">
+                                <button type="submit" class="btn btn-perigo btn-pequeno">Deletar</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <p class="vazio" th:if="${vendas.isEmpty()}">Nenhuma venda registrada.</p>
+    </section>
+</main>
+
+<footer th:replace="~{fragmentos/base :: rodape}"></footer>
+<script th:replace="~{fragmentos/base :: scripts}"></script>
+</body>
+</html>

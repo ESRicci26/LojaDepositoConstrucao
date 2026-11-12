@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos/base :: cabecalho('Erro')}"></head>
+<body>
+<header th:replace="~{fragmentos/base :: barra('')}"></header>
+
+<main class="container">
+    <section class="cartao pagina-erro">
+        <div class="codigo" th:text="${status != null} ? ${status} : 'Erro'">Erro</div>
+        <h1>Algo não saiu como esperado</h1>
+        <p th:if="${mensagem != null}" th:text="${mensagem}"></p>
+        <p th:if="${mensagem == null}"
+           th:text="${status == 404} ? 'A página solicitada não foi encontrada.' : 'Ocorreu um erro inesperado. Tente novamente em instantes.'"></p>
+        <a class="btn" th:href="@{/}">Voltar ao menu</a>
+    </section>
+</main>
+
+<footer th:replace="~{fragmentos/base :: rodape}"></footer>
+</body>
+</html>
